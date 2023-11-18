@@ -39,14 +39,14 @@ def CHECK(val1, val2, mismatch_label=False):
 
 
 st.title("Book of Business Checker")
-st.markdown("""Need to check a new book of business against our salesforce data? This app makes it easy
+st.markdown("""Need to check a new book of business against our salesforce data? This app makes it easy.
 
-If you've already used this app to check a book of business from the same provider, select that provider from below and click run! 
+If you've already used this app to check a book of business from the same provider, select the provider from the `Use Existing Automation` tab and click run! 
 
 Otherwise, click the `Start new automation` button below to create a new automation.
 """)
 
-create_tab, consume_tab = st.tabs(["Start New Automation", "Use Existing Automation"])
+consume_tab, create_tab = st.tabs(["Use Existing Automation", "Start New Automation"])
 
 with create_tab:
 
@@ -54,12 +54,16 @@ with create_tab:
 
     # Create an empty spreadsheet
     analysis: RunnableAnalysis = spreadsheet(
-        import_folder='./data',
+        import_folder='~',
         return_type='analysis',
         sheet_functions=[CHECK]
     )
 
     if st.button("Save automation"):
+        if provider_name == '':
+            st.warning("Please enter a provider name before saving")
+            st.stop()
+
         saved, error_message = save_analysis(provider_name, analysis)
 
         if not saved:
@@ -112,6 +116,8 @@ with consume_tab:
 
         if result is None:
             st.warning("This analysis concluded without any results. Please create this analysis again.")
+        else:
+            st.success("Check completed successfully. See below for results.")
 
         # Handle the annoying case where the result is a single dataframe
         if isinstance(result, pd.DataFrame):
@@ -119,7 +125,7 @@ with consume_tab:
 
         spreadsheet(
             *result,
-            import_folder='./',
+            import_folder='~',
             return_type='analysis',
             sheet_functions=[CHECK]
         )
