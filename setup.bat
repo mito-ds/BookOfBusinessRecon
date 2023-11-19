@@ -8,19 +8,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Get Python version
-for /f "delims=" %%i in ('python -c "import platform; print(platform.python_version())"') do set PYTHON_VERSION=%%i
-
-REM Check Python version
-echo Found Python version %PYTHON_VERSION%
-if "%PYTHON_VERSION%" lss "3.8" (
-    echo Error: Python version is too old. Please install Python between 3.8 and 3.11.
-    exit /b 1
-) else if "%PYTHON_VERSION%" gtr "3.11" (
-    echo Error: Python version is too new. Please install Python between 3.8 and 3.11.
-    exit /b 1
-)
-
 REM Create a virtual environment
 python -m venv venv
 if errorlevel 1 (
