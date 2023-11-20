@@ -9,29 +9,26 @@ Follow the instructions in the sections below to:
 - Get support from Mito
     
 # Installing the app on a new computer
-### Install Python and Git
+### Install Python
 
 - If you don’t have Python 3.8-3.11 installed on your computer, install it [here](https://www.python.org/downloads/release/python-3116/).
   - In the installer menu, make sure `Add python.exe to PATH` is toggled on
 - Open Command Prompt
 - Confirm that you’ve installed Python on your computer by running the command `python –version`
-- Install git for windows [here](https://git-scm.com/download/win)
 
 
 ### Set up the Book of Business Checker App
 
+- Download the application folder from GitHub
+- Unzip the folder and move it to your Desktop
 - Open Command Prompt
 - Run the following command to navigate to your Desktop
   ```
   cd Desktop
   ```
-- Run the following command to download the recon app
-  ```
-  git clone https://github.com/mito-ds/BookOfBusinessRecon.git
-  ```
 - Run the following command to navigate to the recon app
   ```
-  cd BookOfBusinessRecon
+  cd BookOfBusinessRecon-main
   ```
 - Run the command following command to setup the recon app
   ```
@@ -47,7 +44,7 @@ Follow the instructions in the sections below to:
 - Open the Command Prompt
 - Run the following command to navigate to the recon app
   ```
-  cd Desktop/BookOfBusinessRecon
+  cd Desktop/BookOfBusinessRecon-main
   ```
 - Run the following command to open the recon app
   ```
