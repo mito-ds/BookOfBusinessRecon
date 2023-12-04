@@ -24,7 +24,7 @@ Follow the instructions in the sections below to:
 - Open Command Prompt
 - Run the following command to navigate to your Desktop
   ```
-  cd Desktop
+  cd OneDrive - MyPlanAdvocate Insurance Solutions\Desktop
   ```
 - Run the following command to navigate to the recon app
   ```
@@ -44,7 +44,7 @@ Follow the instructions in the sections below to:
 - Open the Command Prompt
 - Run the following command to navigate to the recon app
   ```
-  cd Desktop/BookOfBusinessRecon-main
+  cd OneDrive - MyPlanAdvocate Insurance Solutions\Desktop\BookOfBusinessRecon-main
   ```
 - Run the following command to open the recon app
   ```
