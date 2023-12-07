@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd 
 from mitosheet.streamlit.v1 import spreadsheet, RunnableAnalysis
 import os
-from file_utils import save_analysis, get_all_provider_names_from_automations, get_runnable_analysis_from_provider_name
+from file_utils import save_analysis, get_all_provider_names_from_automations, get_runnable_analysis_and_description_from_provider_name
 
 # Set the streamlit page to wide so you can see the whole spreadsheet
 st.set_page_config(layout="wide")
@@ -51,6 +51,7 @@ consume_tab, create_tab = st.tabs(["Use Existing Automation", "Start New Automat
 with create_tab:
 
     provider_name = st.text_input("Provider Name", value="")
+    description = st.text_area("Automation Description. Remind yourself which data to import in the future and the purpose of the automation.", value="")
 
     # Create an empty spreadsheet
     analysis: RunnableAnalysis = spreadsheet(
@@ -64,7 +65,11 @@ with create_tab:
             st.warning("Please enter a provider name before saving")
             st.stop()
 
-        saved, error_message = save_analysis(provider_name, analysis)
+        if description == '':
+            st.warning("Please enter a description before saving")
+            st.stop()
+
+        saved, error_message = save_analysis(provider_name, analysis, description)
 
         if not saved:
             st.error(error_message)        
@@ -86,7 +91,9 @@ with consume_tab:
         st.stop()
 
     # Get the analysis from the provider name
-    analysis = get_runnable_analysis_from_provider_name(provider_name)
+    analysis, description = get_runnable_analysis_and_description_from_provider_name(provider_name)
+
+    st.info(f"Automation Description: {description}")
 
     st.markdown("### Upload the new BOB files")
 
