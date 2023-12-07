@@ -14,13 +14,6 @@ if not os.path.exists(os.path.join(os.getcwd(), 'automations')):
 if not os.path.exists(os.path.join(os.getcwd(), 'data')):
     os.mkdir(os.path.join(os.getcwd(), 'data'))
 
-AUTOMATEION_RERUN_KEY = 'automation_rerun'
-if AUTOMATEION_RERUN_KEY not in st.session_state:
-    st.session_state[AUTOMATEION_RERUN_KEY] = False
-
-def set_session_state(key, value):
-    st.session_state[key] = value
-
 def CHECK(val1, val2, mismatch_label=False):
 
     # For each cell in val 1 and val2 perform the following check
@@ -56,7 +49,6 @@ Otherwise, click the `Start new automation` button below to create a new automat
 consume_tab, create_tab = st.tabs(["Use Existing Automation", "Start New Automation"])
 
 with create_tab:
-    st.session_state[AUTOMATEION_RERUN_KEY] = False
 
     provider_name = st.text_input("Provider Name", value="")
 
@@ -118,28 +110,26 @@ with consume_tab:
         if new_param is not None:
             updated_metadata[param['name']] = new_param
 
+    # If all the metadata is not filled out, stop
+    if len(updated_metadata) != len(analysis.get_param_metadata()):
+        st.warning("Please fill out all the metadata")
+        st.stop()
 
-    # Show a button to trigger re-running the analysis with the updated_metadata. 
-    # When clicked, save it to the session state so that when the user edits spreadsheet the spreadsheet
-    # and triggers a rerun of the app, the app will continue to display the spreadsheet 
-    run = st.button('Run', on_click=set_session_state(AUTOMATEION_RERUN_KEY, True))
+    result = analysis.run(**updated_metadata)
 
-    if run or st.session_state[AUTOMATEION_RERUN_KEY]:
-        result = analysis.run(**updated_metadata)
+    if result is None:
+        st.warning("This analysis concluded without any results. Please create this analysis again.")
+    else:
+        st.success("Check completed successfully. See below for results.")
 
-        if result is None:
-            st.warning("This analysis concluded without any results. Please create this analysis again.")
-        else:
-            st.success("Check completed successfully. See below for results.")
+    # Handle the annoying case where the result is a single dataframe
+    if isinstance(result, pd.DataFrame):
+        result = result, 
 
-        # Handle the annoying case where the result is a single dataframe
-        if isinstance(result, pd.DataFrame):
-            result = result, 
-
-        spreadsheet(
-            *result,
-            import_folder='~',
-            return_type='analysis',
-            sheet_functions=[CHECK],
-            key="recon consume spreadsheet"
-        )
+    spreadsheet(
+        *result,
+        import_folder='~',
+        return_type='analysis',
+        sheet_functions=[CHECK],
+        key="recon consume spreadsheet"
+    )
