@@ -94,17 +94,17 @@ with consume_tab:
     updated_metadata = {}
 
     # Loop through the parameters in the analysis to display imports
-    for param in analysis.get_param_metadata():
+    for idx, param in enumerate(analysis.get_param_metadata()):
         new_param = None
 
         # For imports that are exports, display a text input
         if param['subtype'] in ['file_name_export_excel', 'file_name_export_csv']:
-            new_param = st.text_input(param['name'], value=param['original_value'])
+            new_param = st.text_input(param['name'], value=param['original_value'], key=idx)
             
         # For imports that are file imports, display a file uploader
         elif param['subtype'] in ['file_name_import_excel', 'file_name_import_csv']:
             file_path = os.path.basename(param['original_value'])
-            new_param = st.file_uploader(file_path)
+            new_param = st.file_uploader(file_path, key=idx)
         
         if new_param is not None:
             updated_metadata[param['name']] = new_param
