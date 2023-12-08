@@ -57,7 +57,8 @@ with create_tab:
     analysis: RunnableAnalysis = spreadsheet(
         import_folder='~',
         return_type='analysis',
-        sheet_functions=[CHECK]
+        sheet_functions=[CHECK],
+        key="recon creation spreadsheet"
     )
 
     if st.button("Save automation"):
@@ -116,23 +117,26 @@ with consume_tab:
         if new_param is not None:
             updated_metadata[param['name']] = new_param
 
-    # Show a button to trigger re-running the analysis with the updated_metadata
-    run = st.button('Run')
-    if run:
-        result = analysis.run(**updated_metadata)
+    # If all the metadata is not filled out, stop
+    if len(updated_metadata) != len(analysis.get_param_metadata()):
+        st.warning("Please fill out all the metadata")
+        st.stop()
 
-        if result is None:
-            st.warning("This analysis concluded without any results. Please create this analysis again.")
-        else:
-            st.success("Check completed successfully. See below for results.")
+    result = analysis.run(**updated_metadata)
 
-        # Handle the annoying case where the result is a single dataframe
-        if isinstance(result, pd.DataFrame):
-            result = result, 
+    if result is None:
+        st.warning("This analysis concluded without any results. Please create this analysis again.")
+    else:
+        st.success("Check completed successfully. See below for results.")
 
-        spreadsheet(
-            *result,
-            import_folder='~',
-            return_type='analysis',
-            sheet_functions=[CHECK]
-        )
+    # Handle the annoying case where the result is a single dataframe
+    if isinstance(result, pd.DataFrame):
+        result = result, 
+
+    spreadsheet(
+        *result,
+        import_folder='~',
+        return_type='analysis',
+        sheet_functions=[CHECK],
+        key="recon consume spreadsheet"
+    )
