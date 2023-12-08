@@ -20,7 +20,8 @@ def get_file_name_from_provider_name(provider_name):
 
 def save_analysis(
         provider_name,
-        analysis
+        analysis,
+        description,
     ):
 
     if not os.path.exists(os.path.join(os.getcwd(), 'automations')):
@@ -38,6 +39,7 @@ def save_analysis(
             "mitosheet_version": mitosheet_version,
             "user": getpass.getuser(),
             "creation_time": str(datetime.datetime.now()),
+            "description": description
         }))
 
     return True, None
@@ -62,10 +64,18 @@ def get_all_provider_names_from_automations():
 
     return providers
 
-def get_runnable_analysis_from_provider_name(provider_name):
+def get_runnable_analysis_and_description_from_provider_name(provider_name):
     file_name = get_file_name_from_provider_name(provider_name)
     file_path = os.path.join(os.getcwd(), 'automations', file_name)
     with open(file_path, 'r') as f:
         json_string = f.read()
 
-    return RunnableAnalysis.from_json(json.loads(json_string)['analysis'])
+
+    automation_json = json.loads(json_string)
+    analysis = RunnableAnalysis.from_json(automation_json['analysis'])
+
+    # The description key was added in a later release of the app, 
+    # so we first check that the description exists before trying to read it
+    description =  automation_json['description'] if 'description' in automation_json else "No description provided for this automation"
+
+    return analysis, description
